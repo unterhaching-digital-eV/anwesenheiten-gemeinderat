@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anwesenheitsstatistik Gemeinderat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Filter öffnen" aria-expanded="false" aria-controls="sidebar">
+      <span class="menu-toggle__bars" aria-hidden="true"></span>
+      <span class="menu-toggle__text">Filter</span>
+    </button>
+    <div class="app-header__title">
+      <h1>Anwesenheitsstatistik · <span id="hdr-gremium">Gemeinderat</span></h1>
+      <p class="app-header__meta" id="hdr-meta">Daten werden geladen …</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__head">
+        <span class="sidebar__title">Filter &amp; Einstellungen</span>
+        <button class="sidebar__close" id="sidebar-close" type="button" aria-label="Filter schließen">×</button>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">Sitzungen</h2>
+          <div class="panel__actions">
+            <button class="link" data-all="sitzungen">Alle</button>
+            <button class="link" data-none="sitzungen">Keine</button>
+          </div>
+        </div>
+        <div class="checklist checklist--scroll" id="filter-sitzungen"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">Parteien</h2>
+          <div class="panel__actions">
+            <button class="link" data-all="parteien">Alle</button>
+            <button class="link" data-none="parteien">Keine</button>
+          </div>
+        </div>
+        <div class="checklist" id="filter-parteien"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <h2 class="panel__title">Mitglieder</h2>
+          <div class="panel__actions">
+            <button class="link" data-all="mitglieder">Alle</button>
+            <button class="link" data-none="mitglieder">Keine</button>
+          </div>
+        </div>
+        <input type="search" class="search" id="member-search" placeholder="Mitglied suchen …">
+        <div class="checklist checklist--scroll" id="filter-mitglieder"></div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel__title">Optionen</h2>
+        <label class="opt">
+          <span>Personen sortieren nach</span>
+          <select id="opt-sort">
+            <option value="quote-asc">Anwesenheitsquote (niedrigste oben)</option>
+            <option value="quote-desc">Anwesenheitsquote (höchste oben)</option>
+            <option value="fehl-desc">Fehltage (meiste oben)</option>
+            <option value="name">Name (A–Z)</option>
+            <option value="partei">Partei</option>
+          </select>
+        </label>
+        <label class="opt opt--check">
+          <input type="checkbox" id="opt-only-absent">
+          <span>Nur Mitglieder mit Fehlzeiten</span>
+        </label>
+      </section>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+
+    <main class="content">
+      <p class="data-error" id="data-error" hidden></p>
+
+      <p class="hint">
+        <strong>Hinweis:</strong> Die Anwesenheitsdaten einer Sitzung erscheinen erst rund einen Monat später —
+        die Protokolle müssen zunächst in der folgenden Sitzung genehmigt werden.
+      </p>
+
+      <section class="kpis" id="kpis"></section>
+
+      <div class="empty" id="empty-state" hidden></div>
+
+      <div class="grid" id="dashboard">
+        <section class="card" style="--i:0">
+          <div class="card__head">
+            <h2 class="card__title">Gesamtverteilung</h2>
+            <div class="legend" id="legend-status"></div>
+          </div>
+          <div class="chart" id="chart-donut"></div>
+        </section>
+
+        <section class="card" style="--i:1">
+          <h2 class="card__title">Verlauf pro Sitzung</h2>
+          <div class="chart" id="chart-verlauf"></div>
+        </section>
+
+        <section class="card card--wide" style="--i:2">
+          <h2 class="card__title">Anwesenheit nach Partei</h2>
+          <div class="chart" id="chart-partei"></div>
+        </section>
+
+        <section class="card card--wide" style="--i:3">
+          <h2 class="card__title">Anwesenheit pro Person</h2>
+          <div class="chart" id="chart-person"></div>
+        </section>
+
+        <section class="card card--wide" style="--i:4">
+          <div class="card__head">
+            <h2 class="card__title">Detailtabelle</h2>
+            <button class="btn btn--ghost btn--sm" id="btn-csv" type="button">CSV exportieren</button>
+          </div>
+          <div class="table-wrap" id="table-detail"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p class="site-footer__main">
+        Ein Projekt von <a href="https://unterhaching.digital" target="_blank" rel="noopener noreferrer">unterhaching.digital&nbsp;e.&nbsp;V.</a>
+      </p>
+      <p class="site-footer__sub">
+        Gemeinderat <strong>Sebastian Kiunke</strong> ist Mitglied des Vereins · Kontakt:
+        <a href="mailto:sebastian.kiunke@gruene-unterhaching.de">sebastian.kiunke@gruene-unterhaching.de</a>
+      </p>
+      <nav class="site-footer__links">
+        <a href="https://blog.unterhaching.digital/was-uns-langweilige-protokolle-uber-das-engagement-von-politiker-verraten/" target="_blank" rel="noopener noreferrer">Blog: Was uns Protokolle über das Engagement verraten</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://unterhaching.gremien.info/" target="_blank" rel="noopener noreferrer">Datenquelle: Ratsinformationssystem</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
