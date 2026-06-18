@@ -8,8 +8,8 @@ services:
     expose:
       - "80"
 
-    volumes:
-      - ./sitzungen.json:/usr/share/nginx/html/sitzungen.json:ro
+    # volumes:
+    #   - ./sitzungen.json:/usr/share/nginx/html/sitzungen.json:ro
 
     healthcheck:
       test: [ "CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/" ]
